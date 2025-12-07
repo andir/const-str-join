@@ -122,7 +122,7 @@ macro_rules! joined_array {
 
 }
 
-/// Declares a new constant value `name` with the joined string of `array` and `sep`.
+/// Returns a new constant value with the joined string of `array` and `sep`.
 /// Example usage:
 /// ```rust
 /// const FLAGS: &'static str = const_str_join::const_join!(["--help", "--version", "--verbose"], "|");
