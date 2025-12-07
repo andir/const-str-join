@@ -21,14 +21,14 @@
 //!
 //! Example usage:
 //! ```rust
-//! use const_str_join::declare_joined_str;
+//! use const_str_join::const_join;
 //!
 //! const A: &'static str = "A";
 //! const B: &'static str = "B";
 //! const C: &'static str = "C";
 //! const ALL: [&'static str; 3] = [A, B, C] ;
 //! // declare a new &'static str with the final string
-//! const ALL_JOINED: &'static str = declare_joined_str!(ALL, ",");
+//! const ALL_JOINED: &'static str = const_join!(ALL, ",");
 //! assert_eq!(ALL_JOINED, "A,B,C");
 //! ```
 
@@ -125,13 +125,13 @@ macro_rules! joined_array {
 /// Declares a new constant value `name` with the joined string of `array` and `sep`.
 /// Example usage:
 /// ```rust
-/// const FLAGS: &'static str = const_str_join::declare_joined_str!(["--help", "--version", "--verbose"], "|");
-/// const HELP: &'static str = const_str_join::declare_joined_str!(["flags:", FLAGS], " ");
+/// const FLAGS: &'static str = const_str_join::const_join!(["--help", "--version", "--verbose"], "|");
+/// const HELP: &'static str = const_str_join::const_join!(["flags:", FLAGS], " ");
 /// assert_eq!(HELP, "flags: --help|--version|--verbose");
 /// ```
 
 #[macro_export]
-macro_rules! declare_joined_str {
+macro_rules! const_join {
     ($array:expr, $sep:expr) => {
         const {
             const SIZE: usize = $crate::concated_size($array, $sep);
@@ -157,9 +157,9 @@ mod tests {
 
     #[test]
     fn nested() {
-        const FOO: &'static str = declare_joined_str!(ARRAY_OF_STRINGS, ":");
+        const FOO: &'static str = const_join!(ARRAY_OF_STRINGS, ":");
         const MORE_PARTS: [&'static str; 3] = ["<", FOO, ">"];
-        const MORE: &'static str = declare_joined_str!(MORE_PARTS, "");
+        const MORE: &'static str = const_join!(MORE_PARTS, "");
         assert_eq!(FOO, "A:B:C");
         assert_eq!(MORE, "<A:B:C>");
     }
