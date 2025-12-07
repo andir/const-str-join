@@ -1,7 +1,7 @@
 [package]
 name = "const-str-join"
 description = "Small crate to help joining strings during compilation time."
-version = "0.2.1"
+version = "0.3.0"
 edition = "2024"
 license = "MIT"
 repository = "https://github.com/andir/const-str-join"
