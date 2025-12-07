@@ -28,7 +28,7 @@
 //! const C: &'static str = "C";
 //! const ALL: [&'static str; 3] = [A, B, C] ;
 //! // declare a new &'static str with the final string
-//! declare_joined_str!(ALL_JOINED, ALL, ",");
+//! const ALL_JOINED: &'static str = declare_joined_str!(ALL, ",");
 //! assert_eq!(ALL_JOINED, "A,B,C");
 //! ```
 
@@ -125,15 +125,15 @@ macro_rules! joined_array {
 /// Declares a new constant value `name` with the joined string of `array` and `sep`.
 /// Example usage:
 /// ```rust
-/// const_str_join::declare_joined_str!(FLAGS, ["--help", "--version", "--verbose"], "|");
-/// const_str_join::declare_joined_str!(HELP, ["flags:", FLAGS], " ");
+/// const FLAGS: &'static str = const_str_join::declare_joined_str!(["--help", "--version", "--verbose"], "|");
+/// const HELP: &'static str = const_str_join::declare_joined_str!(["flags:", FLAGS], " ");
 /// assert_eq!(HELP, "flags: --help|--version|--verbose");
 /// ```
 
 #[macro_export]
 macro_rules! declare_joined_str {
-    ($name:ident, $array:expr, $sep:expr) => {
-        const $name: &'static str = const {
+    ($array:expr, $sep:expr) => {
+        const {
             const SIZE: usize = $crate::concated_size($array, $sep);
             static STORAGE: [u8; SIZE] = $crate::joined_array!($array, $sep, SIZE);
             // no unwrap in const :|
@@ -142,7 +142,7 @@ macro_rules! declare_joined_str {
             } else {
                 panic!("joined array isn't a valid utf8 string");
             }
-        };
+        }
     };
 }
 
@@ -157,16 +157,16 @@ mod tests {
 
     #[test]
     fn nested() {
-        declare_joined_str!(FOO, ARRAY_OF_STRINGS, ":");
+        const FOO: &'static str = declare_joined_str!(ARRAY_OF_STRINGS, ":");
         const MORE_PARTS: [&'static str; 3] = ["<", FOO, ">"];
-        declare_joined_str!(MORE, MORE_PARTS, "");
+        const MORE: &'static str = declare_joined_str!(MORE_PARTS, "");
         assert_eq!(FOO, "A:B:C");
         assert_eq!(MORE, "<A:B:C>");
     }
 
     #[test]
     fn joined_array() {
-	let s = joined_array!(ARRAY_OF_STRINGS, "-");
+        let s = joined_array!(ARRAY_OF_STRINGS, "-");
         assert_eq!(&s, b"A-B-C");
     }
 }
